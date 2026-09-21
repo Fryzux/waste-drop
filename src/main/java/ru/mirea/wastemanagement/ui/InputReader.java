@@ -24,6 +24,15 @@ public class InputReader {
     }
 
     /**
+     * Ожидание простого нажатия клавиши Enter для продолжения.
+     */
+    public void waitForEnter() {
+        if (scanner.hasNextLine()) {
+            scanner.nextLine();
+        }
+    }
+
+    /**
      * Чтение непустой строки.
      */
     public String readNonEmptyString(String prompt) {

@@ -45,14 +45,14 @@ public class ConsoleMenu {
 
             try {
                 handleMenuChoice(choice);
-            } catch (EntityNotFoundException | BusinessException e) {
+            } catch (BusinessException e) {
                 System.out.println("\n[!] БИЗНЕС-ОШИБКА: " + e.getMessage());
             } catch (Exception e) {
                 System.out.println("\n[!] НЕПРЕДВИДЕННАЯ ОШИБКА: " + e.getMessage());
             }
 
             System.out.println("\nНажмите Enter для возврата в главное меню...");
-            reader.readNonEmptyString("");
+            reader.waitForEnter();
         }
     }
 
