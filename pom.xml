@@ -9,6 +9,8 @@
     <artifactId>waste-management-system</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
+    <name>Мусор Дроп</name>
+    <description>Сервис управления заявками на вывоз отходов «Мусор Дроп» (РТУ МИРЭА - ИПТИП)</description>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
