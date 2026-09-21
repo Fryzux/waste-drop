@@ -1,0 +1,6 @@
+# Шаблон конфигурации подключения к СУБД PostgreSQL
+# Скопируйте этот файл в 'db.properties' и укажите ваши локальные учетные данные:
+db.url=jdbc:postgresql://localhost:5432/waste_db
+db.user=postgres
+db.password=YOUR_LOCAL_PASSWORD
+db.driver=org.postgresql.Driver

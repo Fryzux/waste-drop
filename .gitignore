@@ -1,0 +1,43 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbproject/load-impl.xml
+/nbproject/build-impl.xml
+
+### VS Code ###
+.vscode/
+
+### OS Generated ###
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+### Отчеты и генерируемые документы ###
+reports/*.xlsx
+!reports/.gitkeep
+
+### Защита от конфликтов учетных записей БД ###
+# Локальный конфигурационный файл базы данных не коммитится
+src/main/resources/db.properties
