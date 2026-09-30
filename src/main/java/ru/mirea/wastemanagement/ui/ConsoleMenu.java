@@ -188,8 +188,9 @@ public class ConsoleMenu {
         System.out.println("2. Поиск по ID клиента");
         System.out.println("3. Фильтрация по статусу заявки");
         System.out.println("4. Фильтрация по типу отходов");
+        System.out.println("5. Заявки с объемом от X м³ (фильтр по минимальному объему)");
 
-        int opt = reader.readIntInRange("Выберите тип фильтра [1-4]: ", 1, 4);
+        int opt = reader.readIntInRange("Выберите тип фильтра [1-5]: ", 1, 5);
         List<WasteRequest> result;
 
         switch (opt) {
@@ -216,6 +217,11 @@ public class ConsoleMenu {
                 }
                 int idx = reader.readIntInRange("Выберите тип: ", 1, wt.length) - 1;
                 result = service.filterByWasteType(wt[idx]);
+            }
+            case 5 -> {
+                double minVol = reader.readDoubleInRange("Введите минимальный объем (м³): ", 0.1, 100.0);
+                result = service.filterByMinVolume(minVol);
+                System.out.printf("  [i] Отбор заявок с объемом >= %.2f м³ (сортировка по возрастанию)%n", minVol);
             }
             default -> result = List.of();
         }
