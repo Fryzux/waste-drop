@@ -10,7 +10,7 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>Мусор Дроп</name>
-    <description>Сервис управления заявками на вывоз отходов «Мусор Дроп» (РТУ МИРЭА - ИПТИП)</description>
+    <description>Сервис управления заявками на вывоз отходов «Мусор Дроп»</description>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
