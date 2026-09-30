@@ -133,6 +133,17 @@ class WasteRequestServiceTest {
         assertEquals(15.0, result.get(1).getVolumeM3());
     }
 
+    @Test
+    @DisplayName("Поиск клиента по Email через репозиторий")
+    void testFindClientByEmail() {
+        Optional<Client> found = clientRepository.findByEmail("test@test.ru");
+        assertTrue(found.isPresent());
+        assertEquals("ООО Тест", found.get().getName());
+
+        Optional<Client> notFound = clientRepository.findByEmail("nonexistent@domain.com");
+        assertTrue(notFound.isEmpty());
+    }
+
     // =========================================================================
     // IN-MEMORY STUB REPOSITORIES FOR FAST INDEPENDENT UNIT TESTING
     // =========================================================================
@@ -161,6 +172,11 @@ class WasteRequestServiceTest {
         @Override
         public Optional<Client> findByPhone(String phone) {
             return storage.values().stream().filter(c -> c.getPhone().equals(phone)).findFirst();
+        }
+
+        @Override
+        public Optional<Client> findByEmail(String email) {
+            return storage.values().stream().filter(c -> c.getEmail().equalsIgnoreCase(email)).findFirst();
         }
 
         @Override

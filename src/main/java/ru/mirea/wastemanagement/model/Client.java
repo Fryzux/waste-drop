@@ -17,7 +17,7 @@ public class Client {
     public Client(Long id, String name, String phone, String email) {
         this.id = id;
         this.name = name;
-        this.phone = phone;
+        setPhone(phone);
         this.email = email;
     }
 
@@ -46,6 +46,13 @@ public class Client {
     }
 
     public void setPhone(String phone) {
+        if (phone == null) {
+            throw new IllegalArgumentException("Номер телефона не может быть null!");
+        }
+        long digitCount = phone.chars().filter(Character::isDigit).count();
+        if (digitCount < 10) {
+            throw new IllegalArgumentException("Номер телефона должен содержать не менее 10 цифр: " + phone);
+        }
         this.phone = phone;
     }
 
