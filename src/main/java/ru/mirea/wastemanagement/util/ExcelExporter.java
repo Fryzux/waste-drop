@@ -65,6 +65,27 @@ public class ExcelExporter {
             numberStyle.setDataFormat(format.getFormat("#,##0.00"));
             numberStyle.setAlignment(HorizontalAlignment.RIGHT);
 
+            // Стили для цветной подсветки статусов
+            CellStyle completedStyle = workbook.createCellStyle();
+            completedStyle.cloneStyleFrom(dataStyle);
+            Font completedFont = workbook.createFont();
+            completedFont.setBold(true);
+            completedFont.setColor(IndexedColors.GREEN.getIndex());
+            completedStyle.setFont(completedFont);
+
+            CellStyle inProgressStyle = workbook.createCellStyle();
+            inProgressStyle.cloneStyleFrom(dataStyle);
+            Font inProgressFont = workbook.createFont();
+            inProgressFont.setBold(true);
+            inProgressFont.setColor(IndexedColors.BLUE.getIndex());
+            inProgressStyle.setFont(inProgressFont);
+
+            CellStyle cancelledStyle = workbook.createCellStyle();
+            cancelledStyle.cloneStyleFrom(dataStyle);
+            Font cancelledFont = workbook.createFont();
+            cancelledFont.setColor(IndexedColors.GREY_50_PERCENT.getIndex());
+            cancelledStyle.setFont(cancelledFont);
+
             // Создание строки заголовков
             String[] headers = {
                     "№ Заявки", "Клиент", "Адрес вывоза", "Тип отходов", 
@@ -107,7 +128,13 @@ public class ExcelExporter {
 
                 Cell c5 = row.createCell(5);
                 c5.setCellValue(req.getStatus().getTitle());
-                c5.setCellStyle(dataStyle);
+                CellStyle statusStyle = switch (req.getStatus()) {
+                    case COMPLETED -> completedStyle;
+                    case IN_PROGRESS -> inProgressStyle;
+                    case CANCELLED -> cancelledStyle;
+                    default -> dataStyle;
+                };
+                c5.setCellStyle(statusStyle);
 
                 Cell c6 = row.createCell(6);
                 c6.setCellValue(req.getCreatedAt() != null ? req.getCreatedAt().format(DATE_FORMATTER) : "");
