@@ -87,8 +87,7 @@ waste-management-system/
 ├── .gitignore                               # Исключения Git
 ├── README.md                                # Руководство к проекту
 ├── docs/
-│   ├── ARCHITECTURE.md                      # Диаграммы Mermaid и архитектурный отчет
-│   └── DEFENSE_GUIDE.md                     # Шпаргалка с вопросами комиссии для защиты
+│   └── ARCHITECTURE.md                      # Диаграммы Mermaid и архитектурный отчет
 ├── scripts/
 │   ├── setup-git-branches.ps1               # Скрипт инициализации 4 веток разработки
 │   └── run.bat                              # Быстрый запуск на Windows
