@@ -94,6 +94,23 @@ public class JdbcClientRepository implements ClientRepository {
     }
 
     @Override
+    public Optional<Client> findByEmail(String email) {
+        String sql = "SELECT id, name, phone, email FROM clients WHERE email = ?";
+        try (Connection conn = databaseManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapRow(rs));
+                }
+            }
+            return Optional.empty();
+        } catch (SQLException e) {
+            throw new DatabaseOperationException("Ошибка при поиске клиента по email: " + e.getMessage(), e.getSQLState(), e);
+        }
+    }
+
+    @Override
     public void update(Client client) {
         String sql = "UPDATE clients SET name = ?, phone = ?, email = ? WHERE id = ?";
         try (Connection conn = databaseManager.getConnection();
