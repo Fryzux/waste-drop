@@ -121,6 +121,19 @@ class WasteRequestServiceTest {
     }
 
     @Test
+    @DisplayName("Фильтрация по минимальному объему и сортировка по убыванию (Stream API)")
+    void testFilterByMinVolume() {
+        service.createRequest(1L, "Адрес малый объем", WasteType.MUNICIPAL, 5.0);
+        service.createRequest(1L, "Адрес средний объем", WasteType.CONSTRUCTION, 15.0);
+        service.createRequest(1L, "Адрес большой объем", WasteType.HAZARDOUS, 30.0);
+
+        List<WasteRequest> result = service.filterByMinVolume(10.0);
+        assertEquals(2, result.size());
+        assertEquals(30.0, result.get(0).getVolumeM3());
+        assertEquals(15.0, result.get(1).getVolumeM3());
+    }
+
+    @Test
     @DisplayName("Поиск клиента по Email через репозиторий")
     void testFindClientByEmail() {
         Optional<Client> found = clientRepository.findByEmail("test@test.ru");

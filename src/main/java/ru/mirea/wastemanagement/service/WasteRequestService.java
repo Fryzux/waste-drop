@@ -152,10 +152,10 @@ public class WasteRequestService {
      * Фильтрация заявок по минимальному объему отходов (≥ minVolumeM3).
      * Бизнес-требование: позволяет отобрать крупные партии для приоритетного планирования.
      */
-    public List<WasteRequest> filterByMinVolume(double minVolumeM3) {
+    public List<WasteRequest> filterByMinVolume(double minVolume) {
         return getAllRequests().stream()
-                .filter(r -> r.getVolumeM3() >= minVolumeM3)
-                .sorted(Comparator.comparingDouble(WasteRequest::getVolumeM3))
+                .filter(r -> r.getVolumeM3() >= minVolume)
+                .sorted(Comparator.comparingDouble(WasteRequest::getVolumeM3).reversed())
                 .collect(Collectors.toList());
     }
 
