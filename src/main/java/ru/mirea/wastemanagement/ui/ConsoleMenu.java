@@ -35,7 +35,7 @@ public class ConsoleMenu {
         printBanner();
         while (true) {
             printMainMenu();
-            int choice = reader.readIntInRange("Выберите пункт меню [0-10]: ", 0, 10);
+            int choice = reader.readIntInRange("Выберите пункт меню [0-9]: ", 0, 9);
             System.out.println();
 
             if (choice == 0) {
@@ -73,7 +73,6 @@ public class ConsoleMenu {
         System.out.println("  7. Сортировка заявок (по дате оформления или объему)");
         System.out.println("  8. Аналитика и статистика реестра (5 ключевых метрик)");
         System.out.println("  9. Экспорт реестра в Microsoft Excel (.xlsx)");
-        System.out.println(" 10. О разработчиках системы «Мусор Дроп»");
         System.out.println("  0. Выход из системы");
         System.out.println("------------------------------------------------------------------------");
     }
@@ -88,8 +87,7 @@ public class ConsoleMenu {
             case 6 -> handleSearchAndFilter();
             case 7 -> handleSorting();
             case 8 -> handleStatistics();
-            case 9  -> handleExportExcel();
-            case 10 -> handleTeamInfo();
+            case 9 -> handleExportExcel();
             default -> System.out.println("Неизвестный пункт.");
         }
     }
@@ -273,38 +271,6 @@ public class ConsoleMenu {
         System.out.println("[✓] Файл отчета успешно сформирован!");
         System.out.println("    Расположение: " + savedPath);
         System.out.println("    Всего выгружено строк: " + all.size());
-    }
-
-    // 10. О разработчиках
-    private void handleTeamInfo() {
-        System.out.println();
-        System.out.println("  ╔══════════════════════════════════════════════════════════════════╗");
-        System.out.println("  ║          СЕРВИС «МУСОР ДРОП» — КОМАНДА РАЗРАБОТЧИКОВ            ║");
-        System.out.println("  ╠══════════════════════════════════════════════════════════════════╣");
-        System.out.println("  ║  Учебное заведение:  МИРЭА — Российский технологический         ║");
-        System.out.println("  ║                      университет (РТУ МИРЭА)                    ║");
-        System.out.println("  ║  Институт:           Институт информационных технологий (ИИТ)  ║");
-        System.out.println("  ║  Кафедра:            Программная инженерия (ПИ)                ║");
-        System.out.println("  ║  Группа:             ИКБО-04-22                                ║");
-        System.out.println("  ║  Дисциплина:         Объектно-ориентированное программирование ║");
-        System.out.println("  ╠══════════════════════════════════════════════════════════════════╣");
-        System.out.println("  ║                       СОСТАВ КОМАНДЫ                            ║");
-        System.out.println("  ╠══════════════════════════════════════════════════════════════════╣");
-        System.out.println("  ║  №  Участник                     Роль                          ║");
-        System.out.println("  ╠══════════════════════════════════════════════════════════════════╣");
-        System.out.println("  ║  1. Андрей (Dev 1)               Архитектор / Tech Lead /       ║");
-        System.out.println("  ║                                  Инфраструктура и БД            ║");
-        System.out.println("  ║  2. Dev 2                        Domain Model / JDBC-           ║");
-        System.out.println("  ║                                  репозитории                   ║");
-        System.out.println("  ║  3. Dev 3                        Бизнес-логика / Stream API /   ║");
-        System.out.println("  ║                                  Экспорт в Excel                ║");
-        System.out.println("  ║  4. Dev 4                        Presentation Layer /           ║");
-        System.out.println("  ║                                  CLI Controller / QA            ║");
-        System.out.println("  ╠══════════════════════════════════════════════════════════════════╣");
-        System.out.println("  ║  Репозиторий:  https://github.com/Fryzux/waste-drop             ║");
-        System.out.println("  ║  Стек:         Java 17 · PostgreSQL · JDBC · Apache POI        ║");
-        System.out.println("  ╚══════════════════════════════════════════════════════════════════╝");
-        System.out.println();
     }
 
     private void printTable(List<WasteRequest> requests) {
