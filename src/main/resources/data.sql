@@ -25,6 +25,20 @@ INSERT INTO waste_requests (id, client_id, address, waste_type, volume_m3, statu
 (10, 5, 'г. Москва, ул. Профсоюзная, д. 43', 'MUNICIPAL', 1.80, 'COMPLETED', '2026-03-10 15:10:00')
 ON CONFLICT (id) DO NOTHING;
 
+-- Обновляем типы клиентов
+UPDATE clients SET client_type = 'LEGAL_ENTITY' WHERE id IN (1, 4) AND client_type = 'INDIVIDUAL';
+UPDATE clients SET client_type = 'MUNICIPAL_ORG' WHERE id = 3 AND client_type = 'INDIVIDUAL';
+
+-- Спецтранспорт автопарка (5 единиц)
+INSERT INTO vehicles (id, license_plate, model_name, capacity_m3, status) VALUES
+(1, 'А101МР77', 'КАМАЗ КО-440-5 (Мусоровоз)', 22.00, 'AVAILABLE'),
+(2, 'В202МР77', 'МАЗ КО-449 (Пресс-мусоровоз)', 16.50, 'AVAILABLE'),
+(3, 'С303МР77', 'Scania G410 (Тяжелый бункеровоз)', 32.00, 'ON_ROUTE'),
+(4, 'Е404МР77', 'ГАЗон NEXT (Малый бункеровоз)', 8.00, 'MAINTENANCE'),
+(5, 'К505МР77', 'MAN TGS 26.360 (Крюковой погрузчик)', 27.00, 'AVAILABLE')
+ON CONFLICT (id) DO NOTHING;
+
 -- Корректировка автоинкрементных последовательностей
 SELECT setval('clients_id_seq', COALESCE((SELECT MAX(id) FROM clients), 1));
 SELECT setval('waste_requests_id_seq', COALESCE((SELECT MAX(id) FROM waste_requests), 1));
+SELECT setval('vehicles_id_seq', COALESCE((SELECT MAX(id) FROM vehicles), 1));

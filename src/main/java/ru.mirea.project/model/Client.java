@@ -10,19 +10,29 @@ public class Client {
     private String name;
     private String phone;
     private String email;
+    private ClientType clientType = ClientType.INDIVIDUAL;
 
     public Client() {
     }
 
-    public Client(Long id, String name, String phone, String email) {
+    public Client(Long id, String name, String phone, String email, ClientType clientType) {
         this.id = id;
         this.name = name;
         setPhone(phone);
         this.email = email;
+        this.clientType = clientType != null ? clientType : ClientType.INDIVIDUAL;
+    }
+
+    public Client(Long id, String name, String phone, String email) {
+        this(id, name, phone, email, ClientType.INDIVIDUAL);
     }
 
     public Client(String name, String phone, String email) {
-        this(null, name, phone, email);
+        this(null, name, phone, email, ClientType.INDIVIDUAL);
+    }
+
+    public Client(String name, String phone, String email, ClientType clientType) {
+        this(null, name, phone, email, clientType);
     }
 
     public Long getId() {
@@ -64,6 +74,14 @@ public class Client {
         this.email = email;
     }
 
+    public ClientType getClientType() {
+        return clientType;
+    }
+
+    public void setClientType(ClientType clientType) {
+        this.clientType = clientType != null ? clientType : ClientType.INDIVIDUAL;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -79,6 +97,6 @@ public class Client {
 
     @Override
     public String toString() {
-        return String.format("[ID: %d] %s | Тел: %s | Email: %s", id, name, phone, email);
+        return String.format("[ID: %d] %s (%s) | Тел: %s | Email: %s", id, name, clientType.getTitle(), phone, email);
     }
 }

@@ -7,7 +7,20 @@ CREATE TABLE IF NOT EXISTS clients (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     phone VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL
+    email VARCHAR(100) NOT NULL,
+    client_type VARCHAR(50) NOT NULL DEFAULT 'INDIVIDUAL'
+);
+
+-- Добавляем колонку client_type в существующую таблицу если ее нет
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS client_type VARCHAR(50) DEFAULT 'INDIVIDUAL';
+
+-- 2. Таблица спецтранспорта (мусоровозы и контейнеровозы)
+CREATE TABLE IF NOT EXISTS vehicles (
+    id BIGSERIAL PRIMARY KEY,
+    license_plate VARCHAR(50) NOT NULL UNIQUE,
+    model_name VARCHAR(100) NOT NULL,
+    capacity_m3 NUMERIC(5, 2) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'AVAILABLE'
 );
 
 -- 2. Таблица заявок на вывоз отходов

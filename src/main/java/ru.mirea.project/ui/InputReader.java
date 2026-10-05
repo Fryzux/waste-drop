@@ -86,6 +86,10 @@ public class InputReader {
         }
     }
 
+    public double readDouble(String prompt) {
+        return readDoubleInRange(prompt, 0.01, 1000.0);
+    }
+
     /**
      * Чтение ID сущности (положительный Long).
      */

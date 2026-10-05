@@ -2,6 +2,7 @@ package ru.mirea.project.repository.impl;
 
 import ru.mirea.project.exception.DatabaseOperationException;
 import ru.mirea.project.model.Client;
+import ru.mirea.project.model.ClientType;
 import ru.mirea.project.repository.ClientRepository;
 import ru.mirea.project.util.DatabaseManager;
 
@@ -24,12 +25,13 @@ public class JdbcClientRepository implements ClientRepository {
 
     @Override
     public Client save(Client client) {
-        String sql = "INSERT INTO clients (name, phone, email) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO clients (name, phone, email, client_type) VALUES (?, ?, ?, ?)";
         try (Connection conn = databaseManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, client.getName());
             ps.setString(2, client.getPhone());
             ps.setString(3, client.getEmail());
+            ps.setString(4, client.getClientType() != null ? client.getClientType().name() : ClientType.INDIVIDUAL.name());
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -45,7 +47,7 @@ public class JdbcClientRepository implements ClientRepository {
 
     @Override
     public Optional<Client> findById(Long id) {
-        String sql = "SELECT id, name, phone, email FROM clients WHERE id = ?";
+        String sql = "SELECT id, name, phone, email, client_type FROM clients WHERE id = ?";
         try (Connection conn = databaseManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, id);
@@ -62,7 +64,7 @@ public class JdbcClientRepository implements ClientRepository {
 
     @Override
     public List<Client> findAll() {
-        String sql = "SELECT id, name, phone, email FROM clients ORDER BY id";
+        String sql = "SELECT id, name, phone, email, client_type FROM clients ORDER BY id";
         List<Client> list = new ArrayList<>();
         try (Connection conn = databaseManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -78,7 +80,7 @@ public class JdbcClientRepository implements ClientRepository {
 
     @Override
     public Optional<Client> findByPhone(String phone) {
-        String sql = "SELECT id, name, phone, email FROM clients WHERE phone = ?";
+        String sql = "SELECT id, name, phone, email, client_type FROM clients WHERE phone = ?";
         try (Connection conn = databaseManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, phone);
@@ -95,7 +97,7 @@ public class JdbcClientRepository implements ClientRepository {
 
     @Override
     public Optional<Client> findByEmail(String email) {
-        String sql = "SELECT id, name, phone, email FROM clients WHERE email = ?";
+        String sql = "SELECT id, name, phone, email, client_type FROM clients WHERE email = ?";
         try (Connection conn = databaseManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
@@ -112,13 +114,14 @@ public class JdbcClientRepository implements ClientRepository {
 
     @Override
     public void update(Client client) {
-        String sql = "UPDATE clients SET name = ?, phone = ?, email = ? WHERE id = ?";
+        String sql = "UPDATE clients SET name = ?, phone = ?, email = ?, client_type = ? WHERE id = ?";
         try (Connection conn = databaseManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, client.getName());
             ps.setString(2, client.getPhone());
             ps.setString(3, client.getEmail());
-            ps.setLong(4, client.getId());
+            ps.setString(4, client.getClientType() != null ? client.getClientType().name() : ClientType.INDIVIDUAL.name());
+            ps.setLong(5, client.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new DatabaseOperationException("Ошибка при обновлении клиента ID=" + client.getId() + ": " + e.getMessage(), e.getSQLState(), e);
@@ -142,11 +145,23 @@ public class JdbcClientRepository implements ClientRepository {
     }
 
     private Client mapRow(ResultSet rs) throws SQLException {
+        String typeStr = null;
+        try {
+            typeStr = rs.getString("client_type");
+        } catch (SQLException ignored) {
+        }
+        ClientType type = ClientType.INDIVIDUAL;
+        if (typeStr != null) {
+            try {
+                type = ClientType.valueOf(typeStr);
+            } catch (IllegalArgumentException ignored) {}
+        }
         return new Client(
                 rs.getLong("id"),
                 rs.getString("name"),
                 rs.getString("phone"),
-                rs.getString("email")
+                rs.getString("email"),
+                type
         );
     }
 }
