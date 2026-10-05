@@ -38,7 +38,17 @@ INSERT INTO vehicles (id, license_plate, model_name, capacity_m3, status) VALUES
 (5, 'К505МР77', 'MAN TGS 26.360 (Крюковой погрузчик)', 27.00, 'AVAILABLE')
 ON CONFLICT (id) DO NOTHING;
 
+-- Персонал и экипажи (5 сотрудников)
+INSERT INTO workers (id, full_name, phone, role, salary) VALUES
+(1, 'Петров Василий Иванович', '+7 (916) 111-22-33', 'DRIVER', 85000.00),
+(2, 'Сидоров Алексей Михайлович', '+7 (925) 222-33-44', 'DRIVER', 82000.00),
+(3, 'Ковалев Дмитрий Андреевич', '+7 (903) 333-44-55', 'LOADER', 60000.00),
+(4, 'Морозов Сергей Павлович', '+7 (999) 444-55-66', 'LOADER', 58000.00),
+(5, 'Соколова Анна Викторовна', '+7 (495) 555-66-77', 'DISPATCHER', 75000.00)
+ON CONFLICT (id) DO NOTHING;
+
 -- Корректировка автоинкрементных последовательностей
 SELECT setval('clients_id_seq', COALESCE((SELECT MAX(id) FROM clients), 1));
 SELECT setval('waste_requests_id_seq', COALESCE((SELECT MAX(id) FROM waste_requests), 1));
 SELECT setval('vehicles_id_seq', COALESCE((SELECT MAX(id) FROM vehicles), 1));
+SELECT setval('workers_id_seq', COALESCE((SELECT MAX(id) FROM workers), 1));

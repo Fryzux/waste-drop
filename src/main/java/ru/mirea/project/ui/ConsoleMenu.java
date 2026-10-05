@@ -21,26 +21,33 @@ public class ConsoleMenu {
     private final WasteRequestService service;
     private final ClientService clientService;
     private final VehicleService vehicleService;
+    private final ru.mirea.project.service.WorkerService workerService;
     private final ExcelExporter excelExporter;
     private final InputReader reader;
 
-    public ConsoleMenu(WasteRequestService service, ClientService clientService, VehicleService vehicleService, ExcelExporter excelExporter) {
+    public ConsoleMenu(WasteRequestService service, ClientService clientService, VehicleService vehicleService, 
+                       ru.mirea.project.service.WorkerService workerService, ExcelExporter excelExporter) {
         this.service = service;
         this.clientService = clientService;
         this.vehicleService = vehicleService;
+        this.workerService = workerService;
         this.excelExporter = excelExporter;
         this.reader = new InputReader();
     }
 
+    public ConsoleMenu(WasteRequestService service, ClientService clientService, VehicleService vehicleService, ExcelExporter excelExporter) {
+        this(service, clientService, vehicleService, null, excelExporter);
+    }
+
     public ConsoleMenu(WasteRequestService service, ClientService clientService, ExcelExporter excelExporter) {
-        this(service, clientService, null, excelExporter);
+        this(service, clientService, null, null, excelExporter);
     }
 
     public void start() {
         printBanner();
         while (true) {
             printMainMenu();
-            int choice = reader.readIntInRange("Выберите пункт меню [0-10]: ", 0, 10);
+            int choice = reader.readIntInRange("Выберите пункт меню [0-11]: ", 0, 11);
             System.out.println();
 
             if (choice == 0) {
@@ -79,6 +86,7 @@ public class ConsoleMenu {
         System.out.println("  8. Аналитика и статистика реестра (5 ключевых метрик)");
         System.out.println("  9. Экспорт реестра заявок в Microsoft Excel (.xlsx)");
         System.out.println(" 10. Автопарк спецтехники (управление мусоровозами)");
+        System.out.println(" 11. Персонал и экипажи (водители, грузчики, диспетчеры)");
         System.out.println("  0. Выход из системы");
         System.out.println("------------------------------------------------------------------------");
     }
@@ -95,6 +103,7 @@ public class ConsoleMenu {
             case 8 -> handleStatistics();
             case 9 -> handleExportExcel();
             case 10 -> handleVehiclesSubmenu();
+            case 11 -> handleWorkersSubmenu();
             default -> System.out.println("Неизвестный пункт.");
         }
     }
@@ -288,6 +297,108 @@ public class ConsoleMenu {
                 String path = "./reports/vehicles.xlsx";
                 String saved = excelExporter.exportVehicles(vehicleService.getAllVehicles(), path);
                 System.out.println("[✓] Данные автопарка выгружены в Excel: " + saved);
+            }
+        }
+    }
+
+    // ==========================================================
+    // 11. ПЕРСОНАЛ И ЭКИПАЖИ
+    // ==========================================================
+    private void handleWorkersSubmenu() {
+        if (workerService == null) {
+            System.out.println("[!] Сервис персонала не инициализирован.");
+            return;
+        }
+        System.out.println("--- ПЕРСОНАЛ И ЭКИПАЖИ СПЕЦТЕХНИКИ ---");
+        System.out.println("1. Список всех сотрудников");
+        System.out.println("2. Нанять нового сотрудника (Регистрация)");
+        System.out.println("3. Изменить данные сотрудника (Update)");
+        System.out.println("4. Уволить сотрудника из штата (Delete)");
+        System.out.println("5. Сортировка персонала (прямая и обратная)");
+        System.out.println("6. Фильтрация и поиск сотрудников");
+        System.out.println("7. Экспорт базы персонала в Microsoft Excel");
+        int sub = reader.readIntInRange("Выберите действие [1-7]: ", 1, 7);
+
+        switch (sub) {
+            case 1 -> {
+                List<ru.mirea.project.model.Worker> list = workerService.getAllWorkers();
+                if (list.isEmpty()) System.out.println("Штатное расписание пусто.");
+                else list.forEach(System.out::println);
+            }
+            case 2 -> {
+                String name = reader.readNonEmptyString("Введите ФИО сотрудника: ");
+                String phone = reader.readNonEmptyString("Введите контактный телефон (от 10 цифр): ");
+                System.out.println("Выберите должность:");
+                System.out.println("  1. Водитель мусоровоза (DRIVER)");
+                System.out.println("  2. Оператор-грузчик (LOADER)");
+                System.out.println("  3. Логист-диспетчер (DISPATCHER)");
+                int rChoice = reader.readIntInRange("Должность [1-3]: ", 1, 3);
+                ru.mirea.project.model.WorkerRole role = switch (rChoice) {
+                    case 2 -> ru.mirea.project.model.WorkerRole.LOADER;
+                    case 3 -> ru.mirea.project.model.WorkerRole.DISPATCHER;
+                    default -> ru.mirea.project.model.WorkerRole.DRIVER;
+                };
+                double salary = reader.readDouble("Введите оклад (руб.): ");
+                ru.mirea.project.model.Worker created = workerService.registerWorker(name, phone, role, salary);
+                System.out.printf("[✓] Сотрудник успешно принят в штат: %s\n", created);
+            }
+            case 3 -> {
+                Long id = reader.readId("Введите ID сотрудника: ");
+                String name = reader.readNonEmptyString("Новое ФИО: ");
+                String phone = reader.readNonEmptyString("Новый телефон: ");
+                System.out.println("Выберите должность (1-Водитель, 2-Грузчик, 3-Диспетчер): ");
+                int r = reader.readIntInRange("Должность [1-3]: ", 1, 3);
+                ru.mirea.project.model.WorkerRole role = switch (r) {
+                    case 2 -> ru.mirea.project.model.WorkerRole.LOADER;
+                    case 3 -> ru.mirea.project.model.WorkerRole.DISPATCHER;
+                    default -> ru.mirea.project.model.WorkerRole.DRIVER;
+                };
+                double salary = reader.readDouble("Новый оклад (руб.): ");
+                ru.mirea.project.model.Worker updated = workerService.updateWorker(id, name, phone, role, salary);
+                System.out.printf("[✓] Данные сотрудника обновлены: %s\n", updated);
+            }
+            case 4 -> {
+                Long id = reader.readId("Введите ID сотрудника для увольнения: ");
+                workerService.deleteWorker(id);
+                System.out.printf("[✓] Сотрудник #%d уволен из штата.\n", id);
+            }
+            case 5 -> {
+                System.out.println("1. По ФИО (А-Я, прямая)");
+                System.out.println("2. По ФИО (Я-А, обратная)");
+                System.out.println("3. По окладу (по возрастанию, прямая)");
+                System.out.println("4. По окладу (по убыванию, обратная)");
+                int s = reader.readIntInRange("Выбор [1-4]: ", 1, 4);
+                List<ru.mirea.project.model.Worker> res = switch (s) {
+                    case 1 -> workerService.sortByName(true);
+                    case 2 -> workerService.sortByName(false);
+                    case 3 -> workerService.sortBySalary(true);
+                    case 4 -> workerService.sortBySalary(false);
+                    default -> workerService.getAllWorkers();
+                };
+                res.forEach(System.out::println);
+            }
+            case 6 -> {
+                System.out.println("1. Поиск по фамилии / ФИО");
+                System.out.println("2. Фильтр по должности");
+                int f = reader.readIntInRange("Выбор [1-2]: ", 1, 2);
+                if (f == 1) {
+                    String q = reader.readNonEmptyString("Введите поисковый запрос: ");
+                    workerService.searchByName(q).forEach(System.out::println);
+                } else {
+                    System.out.println("1-Водитель, 2-Грузчик, 3-Диспетчер");
+                    int r = reader.readIntInRange("Должность [1-3]: ", 1, 3);
+                    ru.mirea.project.model.WorkerRole role = switch (r) {
+                        case 2 -> ru.mirea.project.model.WorkerRole.LOADER;
+                        case 3 -> ru.mirea.project.model.WorkerRole.DISPATCHER;
+                        default -> ru.mirea.project.model.WorkerRole.DRIVER;
+                    };
+                    workerService.filterByRole(role).forEach(System.out::println);
+                }
+            }
+            case 7 -> {
+                String path = "./reports/workers.xlsx";
+                String saved = excelExporter.exportWorkers(workerService.getAllWorkers(), path);
+                System.out.println("[✓] Данные персонала выгружены в Excel: " + saved);
             }
         }
     }

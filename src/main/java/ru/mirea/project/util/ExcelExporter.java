@@ -247,6 +247,50 @@ public class ExcelExporter {
         }
     }
 
+    /**
+     * Экспорт штатного расписания и экипажей в файл Excel.
+     */
+    public String exportWorkers(List<ru.mirea.project.model.Worker> workers, String targetFilePath) {
+        Path path = Paths.get(targetFilePath);
+        ensureDirectoryExists(path);
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Штатное расписание");
+
+            CellStyle headerStyle = createHeaderStyle(workbook);
+            CellStyle dataStyle = createDataStyle(workbook);
+
+            String[] headers = {"ID", "ФИО сотрудника", "Должность", "Контактный телефон", "Оклад (руб.)"};
+            Row headerRow = sheet.createRow(0);
+            headerRow.setHeightInPoints(24);
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            int rowIdx = 1;
+            for (ru.mirea.project.model.Worker w : workers) {
+                Row row = sheet.createRow(rowIdx++);
+                Cell c0 = row.createCell(0); c0.setCellValue(w.getId()); c0.setCellStyle(dataStyle);
+                Cell c1 = row.createCell(1); c1.setCellValue(w.getFullName()); c1.setCellStyle(dataStyle);
+                Cell c2 = row.createCell(2); c2.setCellValue(w.getRole().getTitle()); c2.setCellStyle(dataStyle);
+                Cell c3 = row.createCell(3); c3.setCellValue(w.getPhone()); c3.setCellStyle(dataStyle);
+                Cell c4 = row.createCell(4); c4.setCellValue(w.getSalary()); c4.setCellStyle(dataStyle);
+            }
+
+            for (int i = 0; i < headers.length; i++) sheet.autoSizeColumn(i);
+
+            try (FileOutputStream fos = new FileOutputStream(path.toFile())) {
+                workbook.write(fos);
+            }
+            return path.toAbsolutePath().toString();
+        } catch (IOException e) {
+            handleIoException(e, path);
+            return null;
+        }
+    }
+
     private void ensureDirectoryExists(Path path) {
         try {
             if (path.getParent() != null) Files.createDirectories(path.getParent());

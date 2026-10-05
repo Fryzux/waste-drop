@@ -23,6 +23,15 @@ CREATE TABLE IF NOT EXISTS vehicles (
     status VARCHAR(50) NOT NULL DEFAULT 'AVAILABLE'
 );
 
+-- 3. Таблица персонала и экипажей (водители, грузчики, диспетчеры)
+CREATE TABLE IF NOT EXISTS workers (
+    id BIGSERIAL PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL,
+    phone VARCHAR(50) NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    salary NUMERIC(10, 2) NOT NULL DEFAULT 60000.00
+);
+
 -- 2. Таблица заявок на вывоз отходов
 CREATE TABLE IF NOT EXISTS waste_requests (
     id BIGSERIAL PRIMARY KEY,
