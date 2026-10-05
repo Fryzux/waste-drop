@@ -20,6 +20,7 @@
         <postgresql.version>42.7.2</postgresql.version>
         <poi.version>5.2.5</poi.version>
         <junit.version>5.10.2</junit.version>
+        <exec.mainClass>ru.mirea.project.Main</exec.mainClass>
     </properties>
 
     <dependencies>
@@ -56,6 +57,14 @@
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                     <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.6.4</version>
+                <configuration>
+                    <mainClass>ru.mirea.project.Main</mainClass>
                 </configuration>
             </plugin>
             <!-- Сборка исполняемого Fat-JAR со всеми зависимостями для демонстрации -->
