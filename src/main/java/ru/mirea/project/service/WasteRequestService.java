@@ -2,7 +2,6 @@ package ru.mirea.project.service;
 
 import ru.mirea.project.exception.BusinessException;
 import ru.mirea.project.exception.EntityNotFoundException;
-import ru.mirea.project.model.Client;
 import ru.mirea.project.model.RequestStatus;
 import ru.mirea.project.model.WasteRequest;
 import ru.mirea.project.model.WasteType;
